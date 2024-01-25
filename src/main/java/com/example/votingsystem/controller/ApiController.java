@@ -1,10 +1,14 @@
 package com.example.votingsystem.controller;
 
+import com.example.votingsystem.http.HttpHandler;
 import com.example.votingsystem.model.*;
 import com.example.votingsystem.service.VoterServiceImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author samwel.wafula
@@ -27,13 +32,27 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping("/api/v1")
+@RequiredArgsConstructor
 public class ApiController {
-
     private final VoterServiceImpl voterService;
+   @Autowired
+    HttpHandler httpHandler;
+    String CentralUrl= "http://localhost:8085/central/post";
 
-    @Autowired
-    public ApiController(VoterServiceImpl voterService) {
-        this.voterService = voterService;
+
+    @RequestMapping(value = "/p1/getCentral",method = RequestMethod.GET)
+    ResponseEntity<?> getCentralServer(){
+        log.info("primary");
+        return ResponseEntity.ok(httpHandler.SendApiCallRequest("http://localhost:8085/central",
+                HttpMethod.GET));
+    }
+
+    @RequestMapping(value = "/p1/map",method = RequestMethod.POST)
+    public ResponseEntity<?> map(@RequestBody Map<String,Object> values){
+        String fName= (String) values.get("firstname");
+        String sName= String.valueOf(values.getOrDefault("secondname","Wekesa"));
+        log.info("FirstNAME {} SecondName {}",fName,sName);
+        return ResponseEntity.ok(httpHandler.sendSyncCallWithBody(CentralUrl,HttpMethod.POST, values));
     }
 
     @RequestMapping(value = "/p1/voterRegistration", method = RequestMethod.POST)

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+VERSION=1.0.1
+JAR_NAME=VotingSystem
+APP=$JAR_NAME-$VERSION.jar
+
+cp ../target/$APP .
+
+docker build -f voting.Dockerfile -t sam9883/votingsystem:$VERSION .
+rm -rf $APP
+docker push sam9883/votingsystem:$VERSION

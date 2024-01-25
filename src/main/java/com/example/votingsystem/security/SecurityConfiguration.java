@@ -38,7 +38,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
                     authorizationManagerRequestMatcherRegistry.requestMatchers("/api/v1/p1/**")
                             .permitAll()
-                            .requestMatchers("/api/v1/getVotes").hasAuthority("ADMIN")
+                           // .requestMatchers("/api/v1/getVotes").hasAuthority("ADMIN")
                             .anyRequest().authenticated();
                 })
                 .authenticationProvider(authenticationProvider())
